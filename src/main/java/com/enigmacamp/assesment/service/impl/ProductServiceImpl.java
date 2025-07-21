@@ -10,6 +10,7 @@ import com.enigmacamp.assesment.service.ProductService;
 import com.enigmacamp.assesment.service.TaxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,10 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productRequest.getPrice());
         product.setTaxes(taxes);
 
+        for (Tax tax : taxes) {
+            tax.getProducts().add(product);
+        }
+
         productRepository.save(product);
         return ProductMapper.toProductResponse(product);
     }
@@ -42,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> listProducts() {
         return productRepository.findAll().stream()
                 .map(ProductMapper::toProductResponse)

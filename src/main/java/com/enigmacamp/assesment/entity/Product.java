@@ -23,6 +23,6 @@ public class Product {
     private String name;
     private BigDecimal price;
 
-    @ManyToMany(mappedBy = "products")
+    @ManyToMany(mappedBy = "products", fetch = FetchType.EAGER)
     private Set<Tax> taxes;
 }

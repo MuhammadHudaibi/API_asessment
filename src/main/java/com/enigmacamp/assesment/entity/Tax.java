@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,5 +30,5 @@ public class Tax {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "tax_id")
     )
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<>(); ;
 }
