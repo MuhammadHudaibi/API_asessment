@@ -1,7 +1,9 @@
 package com.enigmacamp.assesment.service.impl;
 
 import com.enigmacamp.assesment.constant.UserRole;
+import com.enigmacamp.assesment.dto.request.LoginRequest;
 import com.enigmacamp.assesment.dto.request.UserRequest;
+import com.enigmacamp.assesment.dto.respose.LoginResponse;
 import com.enigmacamp.assesment.dto.respose.UserResponse;
 import com.enigmacamp.assesment.entity.User;
 import com.enigmacamp.assesment.mapper.UserMapper;
@@ -13,8 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse createUser(UserRequest userRequest) {
         User user = new User();
+        user.setName(userRequest.getName());
         user.setUsername(userRequest.getUsername());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setBirthdate(userRequest.getBirthDate());
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String loginUser(UserRequest userRequest) {
+    public LoginResponse loginUser(LoginRequest userRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userRequest.getUsername(),
@@ -51,6 +52,8 @@ public class UserServiceImpl implements UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwtUtils.generateToken(authentication);
+        return LoginResponse.builder()
+                .token(jwtUtils.generateToken(authentication))
+                .build();
     }
 }
